@@ -1,3 +1,4 @@
+const Cart = require('../cartSchema');
 const Order = require('../orderSchema'); // Adjust the path based on your project structure
 const Product = require('../productSchema');
 const { calculateTotalAmount, updateProductQuantities, generateOrderId } = require('./productFunc');
@@ -67,6 +68,55 @@ exports.searchProducts = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+exports.productDetail = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+
+    try {
+        const data = await Product.findById(id);
+        res.status(200).json({ data });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+}
+
+exports.addToCart = async (req, res) => {
+    const { productId } = req.body;
+
+    try {
+        // Check if the product is already in the cart
+        const existingProduct = await Cart.findOne({ productId });
+
+        if (existingProduct) {
+            // If the product is in the cart, remove it
+            await Cart.deleteOne({ productId });
+            res.json({ message: 'Product removed from the cart' });
+        } else {
+            // If the product is not in the cart, add it
+            const newProduct = new Cart({ productId });
+            await newProduct.save();
+            res.json({ message: 'Product added to the cart' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+exports.cart = async (req, res) => {
+    try {
+        const cart = await Cart.find();
+        const productIds = cart.map(product => product.productId);
+        const products = await Product.find({ _id: { $in: productIds } });
+
+        res.status(200).json({ products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 
 exports.update = async (req, res) => {
