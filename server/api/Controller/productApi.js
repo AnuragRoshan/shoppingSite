@@ -47,18 +47,18 @@ exports.products = async (req, res) => {
 
 
 exports.searchProducts = async (req, res) => {
-    const { searchQuery } = req.body;
+    const { id } = req.params;
 
     try {
-        if (!searchQuery) {
+        if (!id) {
             return res.status(400).json({ error: 'Search query is required in the request body.' });
         }
 
         // Use a regular expression to perform a case-insensitive search on productName and description
         const searchResults = await Product.find({
             $or: [
-                { productName: { $regex: searchQuery, $options: 'i' } },
-                { description: { $regex: searchQuery, $options: 'i' } },
+                { productName: { $regex: id, $options: 'i' } },
+                { description: { $regex: id, $options: 'i' } },
             ],
         });
 
@@ -118,9 +118,57 @@ exports.cart = async (req, res) => {
     }
 }
 
+exports.clearCart = async (req, res) => {
+    try {
+        await Cart.deleteMany();
+        res.json({ message: 'Cart cleared successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 exports.update = async (req, res) => {
 
 
 }
 
+
+
+exports.addItem = async (req, res) => {
+    try {
+        const {
+            productName,
+            description,
+            originalRate,
+            sellingRate,
+            imageURL,
+            quantity,
+            rating
+        } = req.body;
+
+        const products = await Product.find();
+
+        const id = products.length + 1;
+
+        // Create a new product instance
+        const newProduct = new Product({
+            id,
+            productName,
+            description,
+            originalRate,
+            sellingRate,
+            imageURL,
+            quantity,
+            rating,
+        });
+
+        // Save the new product to the database
+        const savedProduct = await newProduct.save();
+
+        res.status(201).json({ success: true, product: savedProduct });
+    } catch (error) {
+        console.error('Error adding product:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+};

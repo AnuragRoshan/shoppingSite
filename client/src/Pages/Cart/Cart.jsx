@@ -31,7 +31,7 @@ const Cart = () => {
     cartItems.forEach((item) => {
       total += item.sellingRate;
     });
-    return total;
+    return total.toFixed(2);
   }
 
   function totalDiscount() {
@@ -40,7 +40,7 @@ const Cart = () => {
       total += item.originalRate - item.sellingRate;
     });
 
-    return total;
+    return total.toFixed(2);
   }
 
   return (
@@ -98,7 +98,10 @@ const Cart = () => {
               </div>
             </div>
           </div>
-          <div className="place-order">Checkout</div>
+          <Link to={"/checkout"}>
+            {" "}
+            <div className="place-order">Checkout</div>
+          </Link>
         </div>
       </div>
     </div>

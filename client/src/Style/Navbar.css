@@ -57,3 +57,16 @@
   border-radius: 1rem;
   padding: 0.5rem;
 }
+
+.search-input button {
+  background-color: rgb(229, 229, 229);
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+}
+
+.search-input button:hover {
+  background-color: transparent;
+}

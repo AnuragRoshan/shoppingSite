@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "../../Style/Product.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const Product = () => {
   const { id } = useParams();
   const [product, setProduct] = useState();
   const [cart, setCart] = useState([]);
+  // const [toggled, setToggled] = useState(0);
+
   const toggleCart = async (productId) => {
     try {
-      // Send a request to the API to toggle the cart item
       await axios.post("http://localhost:5000/toggleCart", {
         productId,
       });
@@ -71,10 +72,19 @@ const Product = () => {
               <div className="product-rating">
                 {product.quantity} items in stock , Hurry !
               </div>
-              <div className="product-cart">
-                {cart.find(product)}
-                <button>Add To Cart</button>
-              </div>
+              <Link to="/cart">
+                <div className="product-cart">
+                  {cart.find((item) => item._id === product._id) ? (
+                    <button onClick={() => toggleCart(product._id)}>
+                      Remove From Cart
+                    </button>
+                  ) : (
+                    <button onClick={() => toggleCart(product._id)}>
+                      Add To Cart
+                    </button>
+                  )}
+                </div>
+              </Link>
             </div>
           </div>
         </>

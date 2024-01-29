@@ -6,7 +6,7 @@ async function calculateTotalAmount(items) {
     for (const item of items) {
         console.log(item.productId);
         const product = await Product.findById(item.productId);
-        totalAmount += product.sellingRate * item.quantity;
+        totalAmount += product.sellingRate * 1;
         console.log(totalAmount);
     }
 
@@ -16,7 +16,7 @@ async function calculateTotalAmount(items) {
 async function updateProductQuantities(items) {
     for (const item of items) {
         const product = await Product.findById(item.productId);
-        product.quantity -= item.quantity;
+        product.quantity -= 1;
         await product.save();
     }
 }
